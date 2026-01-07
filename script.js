@@ -1,7 +1,12 @@
 async function shortenURL() {
-    // 🔒 Hard-coded URL (input box ignore)
-    const url = "https://www.youtube.com";
+    const input = document.getElementById("urlInput");
     const resultDiv = document.getElementById("result");
+    const url = input.value;
+
+    if (!url) {
+        resultDiv.innerText = "❌ Please enter a URL";
+        return;
+    }
 
     try {
         const response = await fetch("http://127.0.0.1:8000/shorten", {
@@ -21,9 +26,9 @@ async function shortenURL() {
                 <a href="${shortUrl}" target="_blank">${shortUrl}</a>
             `;
         } else {
-            resultDiv.innerText = data.detail;
+            resultDiv.innerText = data.detail || "Error occurred";
         }
     } catch (error) {
-        resultDiv.innerText = "❌ Server not reachable";
+        resultDiv.innerText = "❌ Backend server not running";
     }
 }

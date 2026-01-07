@@ -1,13 +1,12 @@
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException # pyright: ignore[reportMissingImports]
+from fastapi.middleware.cors import CORSMiddleware # type: ignore
 from pydantic import BaseModel
 from datetime import datetime
 import uuid
 
 app = FastAPI(title="URL Shortener")
 
-#  CORS (frontend ke liye zaroori)
+# CORS (frontend ke liye zaroori)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,24 +15,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#  In-memory database
+# In-memory database
 url_database = {}
 
-#  Request model
+# Request model
 class URLRequest(BaseModel):
     url: str
 
-#  Root
+# Root endpoint
 @app.get("/")
 def root():
     return {"message": "URL Shortener API running"}
 
-#  Health
+# Health check
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
-#  IMPORTANT: SHORTEN ENDPOINT
+# Shorten URL
 @app.post("/shorten")
 def shorten_url(request: URLRequest):
     code = str(uuid.uuid4())[:6]
@@ -46,11 +45,14 @@ def shorten_url(request: URLRequest):
 
     return {"short_code": code}
 
-# Redirect endpoint
+# Redirect URL
 @app.get("/{code}")
 def redirect_url(code: str):
     if code not in url_database:
         raise HTTPException(status_code=404, detail="URL not found")
 
     url_database[code]["clicks"] += 1
-    return {"original_url": url_database[code]["original_url"]}
+    return {
+        "original_url": url_database[code]["original_url"],
+        "clicks": url_database[code]["clicks"]
+    }
