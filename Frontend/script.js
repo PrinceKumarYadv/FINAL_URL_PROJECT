@@ -4,12 +4,12 @@ async function shortenURL() {
     const url = input.value;
 
     if (!url) {
-        resultDiv.innerText = "❌ Please enter a URL";
+        resultDiv.innerText = " Please enter a URL";
         return;
     }
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/shorten", {
+        const response = await fetch("https://final-url-project.onrender.com/shorten", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -20,15 +20,15 @@ async function shortenURL() {
         const data = await response.json();
 
         if (response.ok) {
-            const shortUrl = `http://127.0.0.1:8000/${data.short_code}`;
+            const shortUrl = `https://final-url-project.onrender.com/${data.short_code}`;
             resultDiv.innerHTML = `
-                ✅ Short URL:<br>
+                 Short URL:<br>
                 <a href="${shortUrl}" target="_blank">${shortUrl}</a>
             `;
         } else {
             resultDiv.innerText = data.detail || "Error occurred";
         }
     } catch (error) {
-        resultDiv.innerText = "❌ Backend server not running";
+        resultDiv.innerText = " Backend server not responding";
     }
 }
